@@ -1,28 +1,12 @@
 --[[
-	Название: GradientUI
-	Описание: Библиотека для создания окон с вкладками слева, черно-фиолетовым градиентом и анимациями.
-	Использование:
-		local Library = require(script:WaitForChild("GradientUI"))
-		local window = Library:CreateWindow("Моё окно", UDim2.new(0, 600, 0, 400))
-		local tab1 = window:AddTab("Главная")
-		local tab2 = window:AddTab("Настройки")
-
-		tab1:AddButton("Нажми меня", function()
-			print("Кнопка нажата")
-		end)
-
-		tab1:AddLabel("Это текст")
-
-		tab2:AddSlider("Громкость", 0, 100, 50, function(value)
-			print("Громкость:", value)
-		end)
+	Название: GradientUI (улучшенная версия)
+	Описание: Библиотека с вкладками слева, градиентом, перетаскиванием, закруглениями и анимациями.
 ]]
 
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
 local Library = {}
-local Windows = {} -- для хранения созданных окон
 
 -- Вспомогательная функция для создания анимации
 local function tweenObject(object, goal, time, easingStyle, easingDirection)
@@ -32,11 +16,11 @@ local function tweenObject(object, goal, time, easingStyle, easingDirection)
 	return tween
 end
 
--- Создание основного окна
+-- Создание окна
 function Library:CreateWindow(title, size)
 	local screenGui = Instance.new("ScreenGui")
 	screenGui.Name = "GradientUI"
-	screenGui.Parent = game:GetService("CoreGui") -- или игроку, можно изменить
+	screenGui.Parent = game:GetService("CoreGui") -- Для теста в студии. Для игрока замените на Players.LocalPlayer.PlayerGui
 
 	local mainFrame = Instance.new("Frame")
 	mainFrame.Name = "MainWindow"
@@ -47,16 +31,21 @@ function Library:CreateWindow(title, size)
 	mainFrame.ClipsDescendants = true
 	mainFrame.Parent = screenGui
 
-	-- Градиент (черный -> фиолетовый)
+	-- Скругление углов окна
+	local mainCorner = Instance.new("UICorner")
+	mainCorner.CornerRadius = UDim.new(0, 8)
+	mainCorner.Parent = mainFrame
+
+	-- Градиент (чёрный -> фиолетовый)
 	local gradient = Instance.new("UIGradient")
 	gradient.Color = ColorSequence.new({
-		ColorSequenceKeypoint.new(0, Color3.new(0, 0, 0)),      -- черный
-		ColorSequenceKeypoint.new(1, Color3.new(0.5, 0, 1))    -- фиолетовый
+		ColorSequenceKeypoint.new(0, Color3.new(0, 0, 0)),      -- чёрный
+		ColorSequenceKeypoint.new(1, Color3.new(0.7, 0.2, 1))  -- яркий фиолетовый
 	})
-	gradient.Rotation = 45 -- диагональный градиент
+	gradient.Rotation = 45
 	gradient.Parent = mainFrame
 
-	-- Заголовок окна
+	-- Заголовок окна (для перетаскивания)
 	local titleBar = Instance.new("Frame")
 	titleBar.Name = "TitleBar"
 	titleBar.Size = UDim2.new(1, 0, 0, 30)
@@ -64,6 +53,12 @@ function Library:CreateWindow(title, size)
 	titleBar.BackgroundTransparency = 0.3
 	titleBar.BorderSizePixel = 0
 	titleBar.Parent = mainFrame
+
+	-- Скругление верхних углов (чтобы было красиво)
+	local titleBarCorner = Instance.new("UICorner")
+	titleBarCorner.CornerRadius = UDim.new(0, 8)
+	titleBarCorner.Parent = titleBar
+	-- Но скруглим только верхние углы, для этого нужно обрезать низ, но можно просто оставить так.
 
 	local titleLabel = Instance.new("TextLabel")
 	titleLabel.Name = "Title"
@@ -84,10 +79,49 @@ function Library:CreateWindow(title, size)
 	closeButton.Position = UDim2.new(1, -25, 0.5, -10)
 	closeButton.BackgroundTransparency = 1
 	closeButton.Image = "rbxasset://textures/ui/StickerLibrary/Close.png"
+	closeButton.ImageColor3 = Color3.new(1, 1, 1)
 	closeButton.Parent = titleBar
 
+	-- Анимация кнопки закрытия
+	closeButton.MouseEnter:Connect(function()
+		tweenObject(closeButton, {ImageColor3 = Color3.new(1, 0.5, 1)}, 0.2)
+	end)
+	closeButton.MouseLeave:Connect(function()
+		tweenObject(closeButton, {ImageColor3 = Color3.new(1, 1, 1)}, 0.2)
+	end)
 	closeButton.MouseButton1Click:Connect(function()
 		screenGui:Destroy()
+	end)
+
+	-- Логика перетаскивания окна
+	local dragging = false
+	local dragStartPos
+	local dragStartFramePos
+
+	titleBar.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = true
+			dragStartPos = input.Position
+			dragStartFramePos = mainFrame.Position
+		end
+	end)
+
+	titleBar.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = false
+		end
+	end)
+
+	UserInputService.InputChanged:Connect(function(input)
+		if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+			local delta = input.Position - dragStartPos
+			mainFrame.Position = UDim2.new(
+				dragStartFramePos.X.Scale,
+				dragStartFramePos.X.Offset + delta.X,
+				dragStartFramePos.Y.Scale,
+				dragStartFramePos.Y.Offset + delta.Y
+			)
+		end
 	end)
 
 	-- Левая панель для вкладок
@@ -100,6 +134,11 @@ function Library:CreateWindow(title, size)
 	tabsPanel.BorderSizePixel = 0
 	tabsPanel.Parent = mainFrame
 
+	-- Скругление левой панели (только левая сторона, но для простоты скруглим все углы)
+	local tabsCorner = Instance.new("UICorner")
+	tabsCorner.CornerRadius = UDim.new(0, 8)
+	tabsCorner.Parent = tabsPanel
+
 	-- Панель контента (справа)
 	local contentPanel = Instance.new("Frame")
 	contentPanel.Name = "ContentPanel"
@@ -110,6 +149,11 @@ function Library:CreateWindow(title, size)
 	contentPanel.BorderSizePixel = 0
 	contentPanel.Parent = mainFrame
 
+	-- Скругление правой панели
+	local contentCorner = Instance.new("UICorner")
+	contentCorner.CornerRadius = UDim.new(0, 8)
+	contentCorner.Parent = contentPanel
+
 	-- Хранилище вкладок
 	local tabs = {}
 	local currentTab = nil
@@ -118,27 +162,22 @@ function Library:CreateWindow(title, size)
 	local function switchTab(tabName)
 		if currentTab == tabName then return end
 
-		-- Анимация исчезновения текущего контента
 		if currentTab and tabs[currentTab] and tabs[currentTab].contentFrame then
 			local oldContent = tabs[currentTab].contentFrame
 			tweenObject(oldContent, {BackgroundTransparency = 1}, 0.3)
-			-- Можно добавить анимацию сдвига
 		end
 
-		-- Показываем новый контент
 		local newContent = tabs[tabName].contentFrame
 		if newContent then
 			newContent.Visible = true
 			newContent.BackgroundTransparency = 1
 			tweenObject(newContent, {BackgroundTransparency = 0.9}, 0.3)
-			-- Анимация появления
 		end
 
-		-- Анимация кнопок вкладок
 		for name, tabData in pairs(tabs) do
 			local btn = tabData.button
 			if name == tabName then
-				tweenObject(btn, {BackgroundColor3 = Color3.new(0.5, 0, 1), TextColor3 = Color3.new(1, 1, 1)}, 0.2)
+				tweenObject(btn, {BackgroundColor3 = Color3.new(0.7, 0.2, 1), TextColor3 = Color3.new(1, 1, 1)}, 0.2)
 			else
 				tweenObject(btn, {BackgroundColor3 = Color3.new(0.2, 0.2, 0.2), TextColor3 = Color3.new(0.8, 0.8, 0.8)}, 0.2)
 			end
@@ -147,7 +186,7 @@ function Library:CreateWindow(title, size)
 		currentTab = tabName
 	end
 
-	-- Метод для добавления новой вкладки
+	-- Метод добавления вкладки
 	function tabsPanel:AddTab(name)
 		local tabButton = Instance.new("TextButton")
 		tabButton.Name = name.."Tab"
@@ -162,7 +201,11 @@ function Library:CreateWindow(title, size)
 		tabButton.AutoButtonColor = false
 		tabButton.Parent = tabsPanel
 
-		-- Эффект наведения
+		-- Скругление кнопки вкладки
+		local btnCorner = Instance.new("UICorner")
+		btnCorner.CornerRadius = UDim.new(0, 6)
+		btnCorner.Parent = tabButton
+
 		tabButton.MouseEnter:Connect(function()
 			if currentTab ~= name then
 				tweenObject(tabButton, {BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)}, 0.2)
@@ -174,7 +217,6 @@ function Library:CreateWindow(title, size)
 			end
 		end)
 
-		-- Контейнер для содержимого вкладки
 		local contentFrame = Instance.new("ScrollingFrame")
 		contentFrame.Name = name.."Content"
 		contentFrame.Size = UDim2.new(1, -20, 1, -20)
@@ -183,17 +225,19 @@ function Library:CreateWindow(title, size)
 		contentFrame.BackgroundTransparency = 1
 		contentFrame.BorderSizePixel = 0
 		contentFrame.ScrollBarThickness = 6
-		contentFrame.ScrollBarImageColor3 = Color3.new(0.5, 0, 1)
+		contentFrame.ScrollBarImageColor3 = Color3.new(0.7, 0.2, 1)
 		contentFrame.Visible = false
 		contentFrame.Parent = contentPanel
 
+		-- Скругление скролл-фрейма (но так как он прозрачный, не обязательно)
+		-- Но можно добавить, если хотите
 		local uiListLayout = Instance.new("UIListLayout")
 		uiListLayout.Padding = UDim.new(0, 5)
 		uiListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 		uiListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 		uiListLayout.Parent = contentFrame
 
-		-- Сохраняем данные вкладки
+		-- Таблица методов вкладки
 		local tabData = {
 			name = name,
 			button = tabButton,
@@ -210,11 +254,14 @@ function Library:CreateWindow(title, size)
 				btn.AutoButtonColor = false
 				btn.Parent = contentFrame
 
+				local btnCorner = Instance.new("UICorner")
+				btnCorner.CornerRadius = UDim.new(0, 6)
+				btnCorner.Parent = btn
+
 				btn.MouseButton1Click:Connect(callback)
 
-				-- Анимация нажатия
 				btn.MouseButton1Down:Connect(function()
-					tweenObject(btn, {BackgroundColor3 = Color3.new(0.5, 0, 1)}, 0.1)
+					tweenObject(btn, {BackgroundColor3 = Color3.new(0.7, 0.2, 1)}, 0.1)
 				end)
 				btn.MouseButton1Up:Connect(function()
 					tweenObject(btn, {BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)}, 0.1)
@@ -253,11 +300,19 @@ function Library:CreateWindow(title, size)
 				slider.BorderSizePixel = 0
 				slider.Parent = sliderFrame
 
+				local sliderCorner = Instance.new("UICorner")
+				sliderCorner.CornerRadius = UDim.new(0, 4)
+				sliderCorner.Parent = slider
+
 				local fill = Instance.new("Frame")
 				fill.Size = UDim2.new((default - min) / (max - min), 0, 1, 0)
-				fill.BackgroundColor3 = Color3.new(0.5, 0, 1)
+				fill.BackgroundColor3 = Color3.new(0.7, 0.2, 1)
 				fill.BorderSizePixel = 0
 				fill.Parent = slider
+
+				local fillCorner = Instance.new("UICorner")
+				fillCorner.CornerRadius = UDim.new(0, 4)
+				fillCorner.Parent = fill
 
 				local dragButton = Instance.new("TextButton")
 				dragButton.Size = UDim2.new(0, 20, 0, 20)
@@ -267,12 +322,16 @@ function Library:CreateWindow(title, size)
 				dragButton.BorderSizePixel = 0
 				dragButton.Parent = slider
 
+				local dragCorner = Instance.new("UICorner")
+				dragCorner.CornerRadius = UDim.new(0, 10) -- круглая кнопка
+				dragCorner.Parent = dragButton
+
 				local dragging = false
 				local function updateSlider(input)
 					local pos = input.Position.X - slider.AbsolutePosition.X
 					local percent = math.clamp(pos / slider.AbsoluteSize.X, 0, 1)
 					local value = min + (max - min) * percent
-					value = math.floor(value * 100) / 100 -- округление до сотых
+					value = math.floor(value * 100) / 100
 					fill.Size = UDim2.new(percent, 0, 1, 0)
 					dragButton.Position = UDim2.new(percent, -10, 0.5, -10)
 					label.Text = text .. ": " .. tostring(value)
@@ -303,7 +362,6 @@ function Library:CreateWindow(title, size)
 			switchTab(name)
 		end)
 
-		-- Если это первая вкладка, активируем её
 		if #tabs == 1 then
 			switchTab(name)
 		end
@@ -311,14 +369,13 @@ function Library:CreateWindow(title, size)
 		return tabData
 	end
 
-	-- Добавляем метод AddTab в окно
-	mainWindow = {
+	local mainWindow = {
 		AddTab = function(self, name)
 			return tabsPanel:AddTab(name)
 		end
 	}
 
-	-- Анимация появления окна
+	-- Анимация появления
 	mainFrame.BackgroundTransparency = 1
 	tweenObject(mainFrame, {BackgroundTransparency = 0.1}, 0.5)
 
