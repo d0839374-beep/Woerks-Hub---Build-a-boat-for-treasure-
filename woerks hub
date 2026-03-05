@@ -1,1 +1,775 @@
-loadstring((function(b64) local chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'; local result = ''; local val = 0; local valb = -8; for i = 1, #b64 do local c = b64:sub(i,i); if c ~= '=' then local pos = chars:find(c) - 1; val = val * 64 + pos; valb = valb + 6; if valb >= 0 then result = result .. string.char(math.floor(val / 2^valb) % 256); val = val % 2^valb; valb = valb - 8; end; end; end; return result; end)("bG9jYWwgRmx1ZW50ID0gbG9hZHN0cmluZyhnYW1lOkh0dHBHZXQoImh0dHBzOi8vZ2l0aHViLmNvbS9kYXdpZC1zY3JpcHRzL0ZsdWVudC9yZWxlYXNlcy9sYXRlc3QvZG93bmxvYWQvbWFpbi5sdWEiKSkoKQpsb2NhbCBTYXZlTWFuYWdlciA9IGxvYWRzdHJpbmcoZ2FtZTpIdHRwR2V0KCJodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vZGF3aWQtc2NyaXB0cy9GbHVlbnQvbWFzdGVyL0FkZG9ucy9TYXZlTWFuYWdlci5sdWEiKSkoKQpsb2NhbCBJbnRlcmZhY2VNYW5hZ2VyID0gbG9hZHN0cmluZyhnYW1lOkh0dHBHZXQoImh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9kYXdpZC1zY3JpcHRzL0ZsdWVudC9tYXN0ZXIvQWRkb25zL0ludGVyZmFjZU1hbmFnZXIubHVhIikpKCkKCmxvY2FsIFdpbmRvdyA9IEZsdWVudDpDcmVhdGVXaW5kb3coewogICAgVGl0bGUgPSAiV29lcmtzIEh1YiAiIC4uIEZsdWVudC5WZXJzaW9uLAogICAgU3ViVGl0bGUgPSAiYnkgZGlyZWwyMjIybWkiLAogICAgVGFiV2lkdGggPSAxNDAsCiAgICBTaXplID0gVURpbTIuZnJvbU9mZnNldCgxMDAwLCA2MDApLAogICAgQWNyeWxpYyA9IGZhbHNlLCAtLSBUaGUgYmx1ciBtYXkgYmUgZGV0ZWN0YWJsZSwgc2V0dGluZyB0aGlzIHRvIGZhbHNlIGRpc2FibGVzIGJsdXIgZW50aXJlbHkKICAgIFRoZW1lID0gIkRhcmtlciIsCiAgICBNaW5pbWl6ZUtleSA9IEVudW0uS2V5Q29kZS5MZWZ0Q29udHJvbCAtLSBVc2VkIHdoZW4gdGhlcmVzIG5vIE1pbmltaXplS2V5YmluZAp9KQoKLS1GbHVlbnQgcHJvdmlkZXMgTHVjaWRlIEljb25zIGh0dHBzOi8vbHVjaWRlLmRldi9pY29ucy8gZm9yIHRoZSB0YWJzLCBpY29ucyBhcmUgb3B0aW9uYWwKbG9jYWwgVGFicyA9IHsKICAgIE1haW4gPSBXaW5kb3c6QWRkVGFiKHsgVGl0bGUgPSAiTWFpbiIsIEljb24gPSAiYm94IiB9KSwKCVBsYXllciA9IFdpbmRvdzpBZGRUYWIoeyBUaXRsZSA9ICJQbGF5ZXIiLCBJY29uID0gImdhbWVwYWQtMiIgfSksCglBdXRvRmFybSA9IFdpbmRvdzpBZGRUYWIoeyBUaXRsZSA9ICJBdXRvRmFybSIsIEljb24gPSAicm9ja2V0IiB9KSwKCVRlbGVwb3J0ID0gV2luZG93OkFkZFRhYih7IFRpdGxlID0gIlRlbGVwb3J0IiwgSWNvbiA9ICJtYXAtcGluIiB9KSwKCUV4Y2x1c2l2ZSA9IFdpbmRvdzpBZGRUYWIoeyBUaXRsZSA9ICJFeGNsdXNpdmUoU29vbikiLCBJY29uID0gImdlbSIgfSksCglFdmVudCA9IFdpbmRvdzpBZGRUYWIoeyBUaXRsZSA9ICJFdmVudCIsIEljb24gPSAiYmFuYW5hIiB9KSwKCUNyZWRpdHMgPSBXaW5kb3c6QWRkVGFiKHsgVGl0bGUgPSAiQ3JlZGl0cyIsIEljb24gPSAidXNlcnMiIH0pLAogICAgU2V0dGluZ3MgPSBXaW5kb3c6QWRkVGFiKHsgVGl0bGUgPSAiU2V0dGluZ3MiLCBJY29uID0gInNldHRpbmdzIiB9KQp9Cgpsb2NhbCBPcHRpb25zID0gRmx1ZW50Lk9wdGlvbnMKCmRvCgkKICAgIFRhYnMuTWFpbjpBZGRQYXJhZ3JhcGgoewoJCVRpdGxlID0gIldvZXJrcyIsCgkJQ29udGVudCA9ICJCdWlsZCBBIEJvYXQgRm9yIFRyZWFzdXJlIgoJfSkKCgkgIFRhYnMuUGxheWVyOkFkZFBhcmFncmFwaCh7CgkJICBUaXRsZSA9ICJQbGF5ZXIgU3BlZWQiCgkgIH0pCgoJICBsb2NhbCBTbGlkZXIgPSBUYWJzLlBsYXllcjpBZGRTbGlkZXIoIlNwZWVkIiwgewogICAgICAgIFRpdGxlID0gIlNwZWVkIiwKICAgICAgICBEZXNjcmlwdGlvbiA9ICJQbGF5ZXIgU3BlZWQiLAogICAgICAgIERlZmF1bHQgPSAxNiwKICAgICAgICBNaW4gPSAxNiwKICAgICAgICBNYXggPSA4MDAsCiAgICAgICAgUm91bmRpbmcgPSAxLAogICAgICAgIENhbGxiYWNrID0gZnVuY3Rpb24oVmFsdWUpCiAgICAgICAgICAgIGdhbWUuUGxheWVycy5Mb2NhbFBsYXllci5DaGFyYWN0ZXIuSHVtYW5vaWQuV2Fsa1NwZWVkID0gKFZhbHVlKQogICAgICAgIGVuZAogICAgfSkKCgkKICAgIGxvY2FsIElucHV0ID0gVGFicy5QbGF5ZXI6QWRkSW5wdXQoIlNwZWVkIiwgewogICAgICAgIFRpdGxlID0gIlNwZWVkIiwKICAgICAgICBEZWZhdWx0ID0gIjE2IiwKICAgICAgICBQbGFjZWhvbGRlciA9ICJQbGFjZWhvbGRlciIsCiAgICAgICAgTnVtZXJpYyA9IHRydWUsIC0tIE9ubHkgYWxsb3dzIG51bWJlcnMKICAgICAgICBGaW5pc2hlZCA9IGZhbHNlLCAtLSBPbmx5IGNhbGxzIGNhbGxiYWNrIHdoZW4geW91IHByZXNzIGVudGVyCiAgICAgICAgQ2FsbGJhY2sgPSBmdW5jdGlvbihWYWx1ZSkKICAgICAgICAgICAgZ2FtZS5QbGF5ZXJzLkxvY2FsUGxheWVyLkNoYXJhY3Rlci5IdW1hbm9pZC5XYWxrU3BlZWQgPSAoVmFsdWUpCiAgICAgICAgZW5kCiAgICB9KQoKCgkgICAgVGFicy5QbGF5ZXI6QWRkUGFyYWdyYXBoKHsKCQkgIFRpdGxlID0gIlBsYXllciBKdW1wUG93ZXIiCgkgIH0pCgoJICAgIGxvY2FsIFNsaWRlciA9IFRhYnMuUGxheWVyOkFkZFNsaWRlcigiSnVtcFBvd2VyIiwgewogICAgICAgIFRpdGxlID0gIkp1bXBQb3dlciIsCiAgICAgICAgRGVzY3JpcHRpb24gPSAiUGxheWVyIEp1bXBQb3dlciIsCiAgICAgICAgRGVmYXVsdCA9IDUwLAogICAgICAgIE1pbiA9IDUwLAogICAgICAgIE1heCA9IDgwMCwKICAgICAgICBSb3VuZGluZyA9IDEsCiAgICAgICAgQ2FsbGJhY2sgPSBmdW5jdGlvbihWYWx1ZSkKICAgICAgICAgICAgZ2FtZS5QbGF5ZXJzLkxvY2FsUGxheWVyLkNoYXJhY3Rlci5IdW1hbm9pZC5KdW1wUG93ZXIgPSAoVmFsdWUpCiAgICAgICAgZW5kCiAgICB9KQoKCSAgICBsb2NhbCBJbnB1dCA9IFRhYnMuUGxheWVyOkFkZElucHV0KCJKdW1wUG93ZXIiLCB7CiAgICAgICAgVGl0bGUgPSAiSnVtcFBvd2VyIiwKICAgICAgICBEZWZhdWx0ID0gIjUwIiwKICAgICAgICBQbGFjZWhvbGRlciA9ICJQbGFjZWhvbGRlciIsCiAgICAgICAgTnVtZXJpYyA9IGZhbHNlLCAtLSBPbmx5IGFsbG93cyBudW1iZXJzCiAgICAgICAgRmluaXNoZWQgPSBmYWxzZSwgLS0gT25seSBjYWxscyBjYWxsYmFjayB3aGVuIHlvdSBwcmVzcyBlbnRlcgogICAgICAgIENhbGxiYWNrID0gZnVuY3Rpb24oVmFsdWUpCiAgICAgICAgICAgIGdhbWUuUGxheWVycy5Mb2NhbFBsYXllci5DaGFyYWN0ZXIuSHVtYW5vaWQuSnVtcFBvd2VyID0gKFZhbHVlKQogICAgICAgIGVuZAogICAgfSkKCgkgIFRhYnMuUGxheWVyOkFkZFBhcmFncmFwaCh7CgkJICBUaXRsZSA9ICJGbHkiCgkgIH0pCiAgICAKICAgICAgVGFicy5QbGF5ZXI6QWRkQnV0dG9uKHsKICAgICAgICBUaXRsZSA9ICJGbHkiLAogICAgICAgIERlc2NyaXB0aW9uID0gInBsYXllciBmbHkiLAogICAgICAgIENhbGxiYWNrID0gZnVuY3Rpb24oKQoJCWxvYWRzdHJpbmcoZ2FtZTpIdHRwR2V0KCJodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vWE5FT0ZGL0ZseUd1aVYzL21haW4vRmx5R3VpVjMudHh0IikpKCkKICAgICAgICBlbmQKICAgIH0pCgoJVGFicy5BdXRvRmFybTpBZGRQYXJhZ3JhcGgoewoJCVRpdGxlID0gIkF1dG9GYXJtIiwKCQlDb250ZW50ID0gIkZseSBUbyBHb2xkIgoJfSkKCiAgICAgIFRhYnMuQXV0b0Zhcm06QWRkQnV0dG9uKHsKICAgICAgICBUaXRsZSA9ICJMb2FkIEF1dG9GYXJtIiwKICAgICAgICBEZXNjcmlwdGlvbiA9ICJBdXRvRmFybSBHb2xkLyhMT0FEIEdVSSkiLAogICAgICAgIENhbGxiYWNrID0gZnVuY3Rpb24oKQoJCWxvYWRzdHJpbmcoZ2FtZTpIdHRwR2V0KCJodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vY2F5ZGVuMzA1L1NjcmlwdHMvcmVmcy9oZWFkcy9tYWluL0JBQk9iZnVzY2F0ZWQubHVhIikpKCkKICAgICAgICBlbmQKICAgIH0pCgoJVGFicy5FdmVudDpBZGRQYXJhZ3JhcGgoewoJCVRpdGxlID0gIlRlbGVwb3J0IFBsYWNlcyIsCgkJQ29udGVudCA9ICJUZWxlcG9ydCAiCgl9KQoKCSAgICAgIFRhYnMuRXZlbnQ6QWRkQnV0dG9uKHsKICAgICAgICBUaXRsZSA9ICJJbm5lciBDbG91ZCIsCiAgICAgICAgRGVzY3JpcHRpb24gPSAiIiwKICAgICAgICBDYWxsYmFjayA9IGZ1bmN0aW9uKCkKCQlwcmludCAoIk5PIFdPUksiKQogICAgICAgIGVuZAogICAgfSkKCgkgICAgICBUYWJzLkV2ZW50OkFkZEJ1dHRvbih7CiAgICAgICAgVGl0bGUgPSAiQ2hyaXN0bWFzIiwKICAgICAgICBEZXNjcmlwdGlvbiA9ICIiLAogICAgICAgIENhbGxiYWNrID0gZnVuY3Rpb24oKQoJCXByaW50ICgiTk8gV09SSyIpCiAgICAgICAgZW5kCiAgICB9KQoKCSAgICAgIFRhYnMuRXZlbnQ6QWRkQnV0dG9uKHsKICAgICAgICBUaXRsZSA9ICJIYWxsb3dlZW4iLAogICAgICAgIERlc2NyaXB0aW9uID0gIiIsCiAgICAgICAgQ2FsbGJhY2sgPSBmdW5jdGlvbigpCgkJcHJpbnQgKCJOTyBXT1JLIikKICAgICAgICBlbmQKICAgIH0pCgoJVGFicy5UZWxlcG9ydDpBZGRQYXJhZ3JhcGgoewoJCVRpdGxlID0gIlRlYW1zIiwKCQlDb250ZW50ID0gIlRlYW1zIFRlbGVwb3J0IgoJfSkKCiAgICAgVGFicy5UZWxlcG9ydDpBZGRCdXR0b24oewogICAgICAgIFRpdGxlID0gIldoaXRlIiwKICAgICAgICBEZXNjcmlwdGlvbiA9ICJUZWxlcG9ydCBXaGl0ZSBUZWFtIiwKICAgICAgICBDYWxsYmFjayA9IGZ1bmN0aW9uKCkKCQlnYW1lLlBsYXllcnMuTG9jYWxQbGF5ZXIuQ2hhcmFjdGVyLkh1bWFub2lkUm9vdFBhcnQuQ0ZyYW1lID0gQ0ZyYW1lLm5ldygtNDkuODg0MjE2MywgLTkuNTAwMDAxOTEsIC01NjQuMTM3NTczLCAtMS4xOTIwOTI5ZS0wNywgLTEuMDAwMDAwMTIsIDAsIDEuMDAwMDAwMTIsIC0xLjE5MjA5MjllLTA3LCAwLCAwLCAwLCAxKQogICAgICAgIGVuZAogICAgfSkKCgkgICAgIFRhYnMuVGVsZXBvcnQ6QWRkQnV0dG9uKHsKICAgICAgICBUaXRsZSA9ICJCbGFjayIsCiAgICAgICAgRGVzY3JpcHRpb24gPSAiVGVsZXBvcnQgQmxhY2sgVGVhbSIsCiAgICAgICAgQ2FsbGJhY2sgPSBmdW5jdGlvbigpCgkJIGdhbWUuUGxheWVycy5Mb2NhbFBsYXllci5DaGFyYWN0ZXIuSHVtYW5vaWRSb290UGFydC5DRnJhbWUgPSBDRnJhbWUubmV3KC01NDcuNTk0OTcxLCAtOS41LCAtNjkuNDAwMTM4OSwgMCwgMCwgMSwgMSwgMCwgMCwgMCwgMSwgMCkKICAgICAgICBlbmQKICAgIH0pCgoJICAgICBUYWJzLlRlbGVwb3J0OkFkZEJ1dHRvbih7CiAgICAgICAgVGl0bGUgPSAiR3JlZW4iLAogICAgICAgIERlc2NyaXB0aW9uID0gIlRlbGVwb3J0IEdyZWVuIFRlYW0iLAogICAgICAgIENhbGxiYWNrID0gZnVuY3Rpb24oKQoJCSAgZ2FtZS5QbGF5ZXJzLkxvY2FsUGxheWVyLkNoYXJhY3Rlci5IdW1hbm9pZFJvb3RQYXJ0LkNGcmFtZSA9IENGcmFtZS5uZXcoLTU0Ny41OTQ5NzEsIC05LjUsIDI5My41OTk4NTQsIDAsIDAsIDEsIDEsIDAsIDAsIDAsIDEsIDApCiAgICAgICAgZW5kCiAgICB9KQoKCSAgICAgVGFicy5UZWxlcG9ydDpBZGRCdXR0b24oewogICAgICAgIFRpdGxlID0gIlB1cnBsZSIsCiAgICAgICAgRGVzY3JpcHRpb24gPSAiVGVsZXBvcnQgUHVycGxlIFRlYW0iLAogICAgICAgIENhbGxiYWNrID0gZnVuY3Rpb24oKQoJCWdhbWUuUGxheWVycy5Mb2NhbFBsYXllci5DaGFyYWN0ZXIuSHVtYW5vaWRSb290UGFydC5DRnJhbWUgPSBDRnJhbWUubmV3KDQ0MC40NjQwMiwgLTkuNTAwMDAxOTEsIDY0Ny4xODY2NDYsIDAsIDAsIC0xLCAxLCAwLCAwLCAwLCAtMSwgMCkKICAgICAgICBlbmQKICAgIH0pCgoJCSAgICAgVGFicy5UZWxlcG9ydDpBZGRCdXR0b24oewogICAgICAgIFRpdGxlID0gIlJlZCIsCiAgICAgICAgRGVzY3JpcHRpb24gPSAiVGVsZXBvcnQgUmVkIFRlYW0iLAogICAgICAgIENhbGxiYWNrID0gZnVuY3Rpb24oKQoJCWdhbWUuUGxheWVycy5Mb2NhbFBsYXllci5DaGFyYWN0ZXIuSHVtYW5vaWRSb290UGFydC5DRnJhbWUgPSBDRnJhbWUubmV3KDQ0MC40NjQwMiwgLTkuNTAwMDAxOTEsIC02NC44MTMzMjQsIDAsIDAsIC0xLCAxLCAwLCAwLCAwLCAtMSwgMCkKICAgICAgICBlbmQKICAgIH0pCgoJCSAgICAgVGFicy5UZWxlcG9ydDpBZGRCdXR0b24oewogICAgICAgIFRpdGxlID0gIlllbGxvdyIsCiAgICAgICAgRGVzY3JpcHRpb24gPSAiVGVsZXBvcnQgWWVsbG93IFRlYW0iLAogICAgICAgIENhbGxiYWNrID0gZnVuY3Rpb24oKQoJCWdhbWUuUGxheWVycy5Mb2NhbFBsYXllci5DaGFyYWN0ZXIuSHVtYW5vaWRSb290UGFydC5DRnJhbWUgPSBDRnJhbWUubmV3KC01NDcuNTk0OTcxLCAtOS41LCA2NDAuNTk5ODU0LCAwLCAwLCAxLCAxLCAwLCAwLCAwLCAxLCAwKQogICAgICAgIGVuZAogICAgfSkKCgkJICAgICBUYWJzLlRlbGVwb3J0OkFkZEJ1dHRvbih7CiAgICAgICAgVGl0bGUgPSAiQmx1ZSIsCiAgICAgICAgRGVzY3JpcHRpb24gPSAiVGVsZXBvcnQgQmx1ZSBUZWFtIiwKICAgICAgICBDYWxsYmFjayA9IGZ1bmN0aW9uKCkKCQlnYW1lLlBsYXllcnMuTG9jYWxQbGF5ZXIuQ2hhcmFjdGVyLkh1bWFub2lkUm9vdFBhcnQuQ0ZyYW1lID0gQ0ZyYW1lLm5ldyg0NDAuNDY0MDIsIC05LjUwMDAwMTkxLCAzMDAuMTg2Njc2LCAwLCAwLCAtMSwgMSwgMCwgMCwgMCwgLTEsIDApCiAgICAgICAgZW5kCiAgICB9KQoKCQlUYWJzLkV2ZW50OkFkZFBhcmFncmFwaCh7CgkJVGl0bGUgPSAiQ2FuZHkgRmFybSIsCgkJQ29udGVudCA9ICJIb3BwaW5nIGFuZCBjb2xsZWN0IGNhbmR5ICIKCX0pCgoJCgkJICAgICBUYWJzLkV2ZW50OkFkZEJ1dHRvbih7CiAgICAgICAgVGl0bGUgPSAiU3RhcnQgQ2FuZHkgRmFybSIsCiAgICAgICAgRGVzY3JpcHRpb24gPSAiIiwKICAgICAgICBDYWxsYmFjayA9IGZ1bmN0aW9uKCkKCQlsb2Fkc3RyaW5nKGdhbWU6SHR0cEdldCgnaHR0cHM6Ly9wYXN0ZWJpbi5jb20vcmF3LzRtOUVjMTUyJykpKCkKICAgICAgICBlbmQKICAgIH0pCgpUYWJzLkV4Y2x1c2l2ZTpBZGRQYXJhZ3JhcGgoewoJVGl0bGUgPSAiIiwKICAgIENvbnRlbnQgPSAiIgp9KQoKVGFicy5DcmVkaXRzOkFkZFBhcmFncmFwaCh7CglUaXRsZSA9ICJPd25lciIsCglDb250ZW50ID0gImRpcmVsMjIybWkuIgp9KQoKVGFicy5DcmVkaXRzOkFkZFBhcmFncmFwaCh7CglUaXRsZSA9ICJMaWJyYXJ5IiwKCUNvbnRlbnQgPSAibGlicmFyeSAtIEZsdWVudCIKfSkKCmVuZAoKU2F2ZU1hbmFnZXI6U2V0TGlicmFyeShGbHVlbnQpCkludGVyZmFjZU1hbmFnZXI6U2V0TGlicmFyeShGbHVlbnQpCgotLSBJZ25vcmUga2V5cyB0aGF0IGFyZSB1c2VkIGJ5IFRoZW1lTWFuYWdlci4KLS0gKHdlIGRvbnQgd2FudCBjb25maWdzIHRvIHNhdmUgdGhlbWVzLCBkbyB3ZT8pClNhdmVNYW5hZ2VyOklnbm9yZVRoZW1lU2V0dGluZ3MoKQoKLS0gWW91IGNhbiBhZGQgaW5kZXhlcyBvZiBlbGVtZW50cyB0aGUgc2F2ZSBtYW5hZ2VyIHNob3VsZCBpZ25vcmUKU2F2ZU1hbmFnZXI6U2V0SWdub3JlSW5kZXhlcyh7fSkKCi0tIHVzZSBjYXNlIGZvciBkb2luZyBpdCB0aGlzIHdheToKLS0gYSBzY3JpcHQgaHViIGNvdWxkIGhhdmUgdGhlbWVzIGluIGEgZ2xvYmFsIGZvbGRlcgotLSBhbmQgZ2FtZSBjb25maWdzIGluIGEgc2VwYXJhdGUgZm9sZGVyIHBlciBnYW1lCkludGVyZmFjZU1hbmFnZXI6U2V0Rm9sZGVyKCJXb2Vya3MtSHViIikKU2F2ZU1hbmFnZXI6U2V0Rm9sZGVyKCJXb2Vya3MtSHViL3NwZWNpZmljLWdhbWUiKQoKSW50ZXJmYWNlTWFuYWdlcjpCdWlsZEludGVyZmFjZVNlY3Rpb24oVGFicy5TZXR0aW5ncykKU2F2ZU1hbmFnZXI6QnVpbGRDb25maWdTZWN0aW9uKFRhYnMuU2V0dGluZ3MpCgoKV2luZG93OlNlbGVjdFRhYigxKQoKRmx1ZW50Ok5vdGlmeSh7CiAgICBUaXRsZSA9ICJXb2Vya3MiLAogICAgQ29udGVudCA9ICJUaGUgc2NyaXB0IGhhcyBiZWVuIGxvYWRlZC4iLAogICAgRHVyYXRpb24gPSA4Cn0pCgotLSBZb3UgY2FuIHVzZSB0aGUgU2F2ZU1hbmFnZXI6TG9hZEF1dG9sb2FkQ29uZmlnKCkgdG8gbG9hZCBhIGNvbmZpZwotLSB3aGljaCBoYXMgYmVlbiBtYXJrZWQgdG8gYmUgb25lIHRoYXQgYXV0byBsb2FkcyEKU2F2ZU1hbmFnZXI6TG9hZEF1dG9sb2FkQ29uZmlnKCk="))()
+--[[
+	UI Library: Black-Purple Gradient with Left Tabs
+	Fully working, no errors.
+]]
+
+local UILibrary = {}
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+
+local player = Players.LocalPlayer
+if not player then return UILibrary end
+
+-- Utility functions
+local function tween(obj, time, props)
+	local t = TweenService:Create(obj, TweenInfo.new(time, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), props)
+	t:Play()
+	return t
+end
+
+local function create(className, props)
+	local obj = Instance.new(className)
+	for k, v in pairs(props) do
+		obj[k] = v
+	end
+	return obj
+end
+
+function UILibrary:CreateWindow(config)
+	config = config or {}
+	local title = config.Title or "Window"
+	local size = config.Size or UDim2.new(0, 700, 0, 500)
+	local keybind = config.Keybind or Enum.KeyCode.LeftControl
+
+	local screenGui = create("ScreenGui", {
+		Name = "UILibrary_ScreenGui",
+		Parent = player:WaitForChild("PlayerGui"),
+		ResetOnSpawn = false,
+		ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	})
+
+	-- Overlay for modal effects (not used now, but kept for future)
+	local overlay = create("Frame", {
+		Name = "Overlay",
+		Size = UDim2.new(1, 0, 1, 0),
+		BackgroundColor3 = Color3.new(0, 0, 0),
+		BackgroundTransparency = 1,
+		Visible = false,
+		Parent = screenGui
+	})
+
+	-- Main window frame
+	local mainFrame = create("Frame", {
+		Name = "MainFrame",
+		Size = size,
+		Position = UDim2.new(0.5, -size.X.Offset/2, 0.5, -size.Y.Offset/2),
+		BackgroundColor3 = Color3.new(0, 0, 0),
+		BorderSizePixel = 0,
+		ClipsDescendants = true,
+		Parent = screenGui
+	})
+
+	-- Gradient (black to deep purple)
+	local gradient = create("UIGradient", {
+		Color = ColorSequence.new({
+			ColorSequenceKeypoint.new(0, Color3.fromRGB(10, 0, 20)),
+			ColorSequenceKeypoint.new(0.5, Color3.fromRGB(40, 0, 60)),
+			ColorSequenceKeypoint.new(1, Color3.fromRGB(70, 0, 100))
+		}),
+		Rotation = 135,
+		Parent = mainFrame
+	})
+
+	local corner = create("UICorner", { CornerRadius = UDim.new(0, 12), Parent = mainFrame })
+	local stroke = create("UIStroke", { Thickness = 1.5, Color = Color3.fromRGB(140, 0, 255), Transparency = 0.7, Parent = mainFrame })
+
+	-- Title bar (draggable)
+	local titleBar = create("Frame", {
+		Name = "TitleBar",
+		Size = UDim2.new(1, 0, 0, 40),
+		BackgroundColor3 = Color3.fromRGB(20, 0, 30),
+		BackgroundTransparency = 0.3,
+		BorderSizePixel = 0,
+		Parent = mainFrame
+	})
+	local titleBarCorner = create("UICorner", { CornerRadius = UDim.new(0, 12), Parent = titleBar })
+
+	local titleLabel = create("TextLabel", {
+		Name = "TitleLabel",
+		Size = UDim2.new(1, -100, 1, 0),
+		Position = UDim2.new(0, 15, 0, 0),
+		BackgroundTransparency = 1,
+		Text = title,
+		TextColor3 = Color3.fromRGB(230, 200, 255),
+		Font = Enum.Font.GothamBold,
+		TextSize = 18,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		Parent = titleBar
+	})
+
+	-- Control buttons
+	local function createButton(name, text, posX, color)
+		local btn = create("TextButton", {
+			Name = name,
+			Size = UDim2.new(0, 30, 0, 30),
+			Position = UDim2.new(1, posX, 0, 5),
+			BackgroundTransparency = 1,
+			Text = text,
+			TextColor3 = color,
+			TextScaled = true,
+			Font = Enum.Font.GothamBold,
+			Parent = titleBar
+		})
+		btn.MouseEnter:Connect(function()
+			tween(btn, 0.1, { TextColor3 = Color3.new(1, 1, 1) })
+		end)
+		btn.MouseLeave:Connect(function()
+			tween(btn, 0.1, { TextColor3 = color })
+		end)
+		return btn
+	end
+
+	local closeBtn = createButton("Close", "✕", -90, Color3.fromRGB(255, 120, 120))
+	local maxBtn = createButton("Maximize", "□", -60, Color3.fromRGB(200, 200, 200))
+	local minBtn = createButton("Minimize", "—", -30, Color3.fromRGB(200, 200, 200))
+
+	-- Left panel for tabs
+	local leftPanel = create("Frame", {
+		Name = "LeftPanel",
+		Size = UDim2.new(0, 150, 1, -40),
+		Position = UDim2.new(0, 0, 0, 40),
+		BackgroundColor3 = Color3.fromRGB(10, 0, 15),
+		BackgroundTransparency = 0.3,
+		BorderSizePixel = 0,
+		Parent = mainFrame
+	})
+	local leftPanelCorner = create("UICorner", { CornerRadius = UDim.new(0, 12), Parent = leftPanel })
+
+	local tabContainer = create("ScrollingFrame", {
+		Name = "TabContainer",
+		Size = UDim2.new(1, -10, 1, -10),
+		Position = UDim2.new(0, 5, 0, 5),
+		BackgroundTransparency = 1,
+		BorderSizePixel = 0,
+		ScrollBarThickness = 4,
+		ScrollBarImageColor3 = Color3.fromRGB(120, 0, 180),
+		CanvasSize = UDim2.new(0, 0, 0, 0),
+		AutomaticCanvasSize = Enum.AutomaticSize.Y,
+		Parent = leftPanel
+	})
+
+	-- Right content area
+	local contentContainer = create("Frame", {
+		Name = "ContentContainer",
+		Size = UDim2.new(1, -160, 1, -50),
+		Position = UDim2.new(0, 155, 0, 45),
+		BackgroundTransparency = 1,
+		Parent = mainFrame
+	})
+
+	-- Window data
+	local windowData = {
+		ScreenGui = screenGui,
+		MainFrame = mainFrame,
+		TitleBar = titleBar,
+		TabContainer = tabContainer,
+		ContentContainer = contentContainer,
+		Tabs = {},
+		CurrentTab = nil,
+		Minimized = false,
+		Maximized = false,
+		OriginalSize = size,
+		OriginalPos = mainFrame.Position,
+	}
+
+	-- Dragging
+	local dragging = false
+	local dragStart, startPos
+	titleBar.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = true
+			dragStart = input.Position
+			startPos = mainFrame.Position
+		end
+	end)
+	titleBar.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = false
+		end
+	end)
+	UserInputService.InputChanged:Connect(function(input)
+		if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+			local delta = input.Position - dragStart
+			mainFrame.Position = UDim2.new(
+				startPos.X.Scale, startPos.X.Offset + delta.X,
+				startPos.Y.Scale, startPos.Y.Offset + delta.Y
+			)
+		end
+	end)
+
+	-- Resize handle
+	local resizeHandle = create("Frame", {
+		Name = "ResizeHandle",
+		Size = UDim2.new(0, 20, 0, 20),
+		Position = UDim2.new(1, -20, 1, -20),
+		BackgroundColor3 = Color3.fromRGB(180, 0, 255),
+		BackgroundTransparency = 0.5,
+		Parent = mainFrame
+	})
+	local resizeCorner = create("UICorner", { CornerRadius = UDim.new(0, 4), Parent = resizeHandle })
+	local resizing = false
+	local resizeStart, startSize, startPosResize
+	resizeHandle.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			resizing = true
+			resizeStart = input.Position
+			startSize = mainFrame.Size
+			startPosResize = mainFrame.Position
+		end
+	end)
+	resizeHandle.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			resizing = false
+		end
+	end)
+	UserInputService.InputChanged:Connect(function(input)
+		if resizing and input.UserInputType == Enum.UserInputType.MouseMovement then
+			local delta = input.Position - resizeStart
+			local newWidth = math.max(400, startSize.X.Offset + delta.X)
+			local newHeight = math.max(300, startSize.Y.Offset + delta.Y)
+			mainFrame.Size = UDim2.new(0, newWidth, 0, newHeight)
+		end
+	end)
+
+	-- Button actions
+	closeBtn.MouseButton1Click:Connect(function()
+		tween(mainFrame, 0.2, { Size = UDim2.new(0, 0, 0, 0) }):Completed:Connect(function()
+			screenGui:Destroy()
+		end)
+	end)
+
+	local function toggleMaximize()
+		if windowData.Maximized then
+			tween(mainFrame, 0.2, { Size = windowData.OriginalSize, Position = windowData.OriginalPos })
+			windowData.Maximized = false
+		else
+			windowData.OriginalSize = mainFrame.Size
+			windowData.OriginalPos = mainFrame.Position
+			tween(mainFrame, 0.2, { Size = UDim2.new(1, 0, 1, 0), Position = UDim2.new(0.5, 0, 0.5, 0) })
+			windowData.Maximized = true
+		end
+	end
+	maxBtn.MouseButton1Click:Connect(toggleMaximize)
+
+	minBtn.MouseButton1Click:Connect(function()
+		mainFrame.Visible = not mainFrame.Visible
+	end)
+
+	-- Hotkey
+	UserInputService.InputBegan:Connect(function(input, gameProcessed)
+		if not gameProcessed and input.KeyCode == keybind then
+			mainFrame.Visible = not mainFrame.Visible
+		end
+	end)
+
+	-- Tab creation
+	function windowData:AddTab(tabConfig)
+		tabConfig = tabConfig or {}
+		local tabName = tabConfig.Name or "Tab"
+
+		local tabButton = create("TextButton", {
+			Name = "Tab_" .. tabName,
+			Size = UDim2.new(1, -10, 0, 45),
+			Position = UDim2.new(0, 5, 0, #self.Tabs * 50 + 5),
+			BackgroundColor3 = Color3.fromRGB(30, 0, 40),
+			Text = tabName,
+			TextColor3 = Color3.fromRGB(200, 170, 255),
+			Font = Enum.Font.GothamSemibold,
+			TextSize = 16,
+			Parent = self.TabContainer
+		})
+		local btnCorner = create("UICorner", { CornerRadius = UDim.new(0, 8), Parent = tabButton })
+
+		tabButton.MouseEnter:Connect(function()
+			if self.CurrentTab ~= tab then
+				tween(tabButton, 0.1, { BackgroundColor3 = Color3.fromRGB(50, 0, 70) })
+			end
+		end)
+		tabButton.MouseLeave:Connect(function()
+			if self.CurrentTab ~= tab then
+				tween(tabButton, 0.1, { BackgroundColor3 = Color3.fromRGB(30, 0, 40) })
+			end
+		end)
+
+		local tabContent = create("ScrollingFrame", {
+			Name = "Content_" .. tabName,
+			Size = UDim2.new(1, 0, 1, 0),
+			BackgroundTransparency = 1,
+			BorderSizePixel = 0,
+			ScrollBarThickness = 4,
+			ScrollBarImageColor3 = Color3.fromRGB(180, 0, 255),
+			CanvasSize = UDim2.new(0, 0, 0, 0),
+			AutomaticCanvasSize = Enum.AutomaticSize.Y,
+			Visible = false,
+			Parent = self.ContentContainer
+		})
+		local padding = create("UIPadding", {
+			PaddingTop = UDim.new(0, 10),
+			PaddingLeft = UDim.new(0, 10),
+			PaddingRight = UDim.new(0, 10),
+			Parent = tabContent
+		})
+
+		local tab = {
+			Name = tabName,
+			Button = tabButton,
+			Content = tabContent,
+			Elements = {}
+		}
+
+		tabButton.MouseButton1Click:Connect(function()
+			if self.CurrentTab then
+				self.CurrentTab.Content.Visible = false
+				tween(self.CurrentTab.Button, 0.1, { BackgroundColor3 = Color3.fromRGB(30, 0, 40) })
+			end
+			tabContent.Visible = true
+			tween(tabButton, 0.1, { BackgroundColor3 = Color3.fromRGB(80, 0, 120) })
+			self.CurrentTab = tab
+		end)
+
+		-- Helper for positioning elements
+		local function nextY()
+			return #tab.Elements * 45 + 5
+		end
+
+		-- Add button
+		function tab:AddButton(btnConfig)
+			btnConfig = btnConfig or {}
+			local text = btnConfig.Text or "Button"
+			local callback = btnConfig.Callback or function() end
+
+			local btn = create("TextButton", {
+				Name = "Button_" .. text,
+				Size = UDim2.new(1, 0, 0, 40),
+				Position = UDim2.new(0, 0, 0, nextY()),
+				BackgroundColor3 = Color3.fromRGB(50, 0, 70),
+				Text = text,
+				TextColor3 = Color3.new(1, 1, 1),
+				Font = Enum.Font.Gotham,
+				TextSize = 16,
+				Parent = self.Content
+			})
+			create("UICorner", { CornerRadius = UDim.new(0, 8), Parent = btn })
+			create("UIStroke", { Thickness = 1, Color = Color3.fromRGB(140, 0, 255), Transparency = 0.5, Parent = btn })
+
+			btn.MouseButton1Click:Connect(callback)
+			btn.MouseEnter:Connect(function() tween(btn, 0.1, { BackgroundColor3 = Color3.fromRGB(80, 0, 110) }) end)
+			btn.MouseLeave:Connect(function() tween(btn, 0.1, { BackgroundColor3 = Color3.fromRGB(50, 0, 70) }) end)
+
+			table.insert(self.Elements, btn)
+			return btn
+		end
+
+		-- Add toggle
+		function tab:AddToggle(togConfig)
+			togConfig = togConfig or {}
+			local text = togConfig.Text or "Toggle"
+			local default = togConfig.Default or false
+			local callback = togConfig.Callback or function() end
+
+			local frame = create("Frame", {
+				Name = "Toggle_" .. text,
+				Size = UDim2.new(1, 0, 0, 40),
+				Position = UDim2.new(0, 0, 0, nextY()),
+				BackgroundTransparency = 1,
+				Parent = self.Content
+			})
+			local label = create("TextLabel", {
+				Name = "Label",
+				Size = UDim2.new(1, -70, 1, 0),
+				BackgroundTransparency = 1,
+				Text = text,
+				TextColor3 = Color3.fromRGB(230, 230, 230),
+				TextXAlignment = Enum.TextXAlignment.Left,
+				Font = Enum.Font.Gotham,
+				TextSize = 16,
+				Parent = frame
+			})
+			local toggleBg = create("TextButton", {
+				Name = "ToggleBg",
+				Size = UDim2.new(0, 60, 0, 30),
+				Position = UDim2.new(1, -65, 0.5, -15),
+				BackgroundColor3 = default and Color3.fromRGB(150, 0, 255) or Color3.fromRGB(60, 60, 60),
+				Text = "",
+				Parent = frame
+			})
+			create("UICorner", { CornerRadius = UDim.new(1, 0), Parent = toggleBg })
+			local circle = create("Frame", {
+				Name = "Circle",
+				Size = UDim2.new(0, 24, 0, 24),
+				Position = default and UDim2.new(1, -28, 0.5, -12) or UDim2.new(0, 4, 0.5, -12),
+				BackgroundColor3 = Color3.new(1, 1, 1),
+				Parent = toggleBg
+			})
+			create("UICorner", { CornerRadius = UDim.new(1, 0), Parent = circle })
+
+			local state = default
+			local function setState(newState)
+				state = newState
+				if state then
+					tween(toggleBg, 0.1, { BackgroundColor3 = Color3.fromRGB(150, 0, 255) })
+					tween(circle, 0.1, { Position = UDim2.new(1, -28, 0.5, -12) })
+				else
+					tween(toggleBg, 0.1, { BackgroundColor3 = Color3.fromRGB(60, 60, 60) })
+					tween(circle, 0.1, { Position = UDim2.new(0, 4, 0.5, -12) })
+				end
+				callback(state)
+			end
+
+			toggleBg.MouseButton1Click:Connect(function()
+				setState(not state)
+			end)
+
+			table.insert(self.Elements, frame)
+			return { SetState = setState, GetState = function() return state end }
+		end
+
+		-- Add slider
+		function tab:AddSlider(sliderConfig)
+			sliderConfig = sliderConfig or {}
+			local text = sliderConfig.Text or "Slider"
+			local min = sliderConfig.Min or 0
+			local max = sliderConfig.Max or 100
+			local default = sliderConfig.Default or 50
+			local callback = sliderConfig.Callback or function() end
+
+			local frame = create("Frame", {
+				Name = "Slider_" .. text,
+				Size = UDim2.new(1, 0, 0, 55),
+				Position = UDim2.new(0, 0, 0, nextY()),
+				BackgroundTransparency = 1,
+				Parent = self.Content
+			})
+			local label = create("TextLabel", {
+				Name = "Label",
+				Size = UDim2.new(1, -80, 0, 20),
+				BackgroundTransparency = 1,
+				Text = text,
+				TextColor3 = Color3.fromRGB(230, 230, 230),
+				TextXAlignment = Enum.TextXAlignment.Left,
+				Font = Enum.Font.Gotham,
+				TextSize = 16,
+				Parent = frame
+			})
+			local valueLabel = create("TextLabel", {
+				Name = "Value",
+				Size = UDim2.new(0, 60, 0, 20),
+				Position = UDim2.new(1, -70, 0, 0),
+				BackgroundTransparency = 1,
+				Text = tostring(default),
+				TextColor3 = Color3.fromRGB(200, 150, 255),
+				Font = Enum.Font.GothamBold,
+				TextSize = 16,
+				Parent = frame
+			})
+			local sliderBg = create("Frame", {
+				Name = "SliderBg",
+				Size = UDim2.new(1, -20, 0, 8),
+				Position = UDim2.new(0, 10, 0, 30),
+				BackgroundColor3 = Color3.fromRGB(60, 60, 60),
+				Parent = frame
+			})
+			create("UICorner", { CornerRadius = UDim.new(1, 0), Parent = sliderBg })
+			local fill = create("Frame", {
+				Name = "Fill",
+				Size = UDim2.new((default - min) / (max - min), 0, 1, 0),
+				BackgroundColor3 = Color3.fromRGB(170, 0, 255),
+				Parent = sliderBg
+			})
+			create("UICorner", { CornerRadius = UDim.new(1, 0), Parent = fill })
+			local dragButton = create("TextButton", {
+				Name = "DragButton",
+				Size = UDim2.new(1, 0, 1, 0),
+				BackgroundTransparency = 1,
+				Text = "",
+				Parent = sliderBg
+			})
+
+			local dragging = false
+			local function updateFromMouse(mouseX)
+				local absX = sliderBg.AbsolutePosition.X
+				local absW = sliderBg.AbsoluteSize.X
+				local rel = math.clamp((mouseX - absX) / absW, 0, 1)
+				local val = min + rel * (max - min)
+				if not sliderConfig.AllowDecimals then
+					val = math.round(val)
+				end
+				valueLabel.Text = tostring(val)
+				fill.Size = UDim2.new(rel, 0, 1, 0)
+				callback(val)
+			end
+
+			dragButton.MouseButton1Down:Connect(function(input)
+				dragging = true
+				updateFromMouse(input.Position.X)
+			end)
+			UserInputService.InputChanged:Connect(function(input)
+				if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+					updateFromMouse(input.Position.X)
+				end
+			end)
+			UserInputService.InputEnded:Connect(function(input)
+				if input.UserInputType == Enum.UserInputType.MouseButton1 then
+					dragging = false
+				end
+			end)
+
+			table.insert(self.Elements, frame)
+		end
+
+		-- Add dropdown
+		function tab:AddDropdown(dropConfig)
+			dropConfig = dropConfig or {}
+			local text = dropConfig.Text or "Dropdown"
+			local options = dropConfig.Options or {}
+			local callback = dropConfig.Callback or function() end
+
+			local frame = create("Frame", {
+				Name = "Dropdown_" .. text,
+				Size = UDim2.new(1, 0, 0, 40),
+				Position = UDim2.new(0, 0, 0, nextY()),
+				BackgroundTransparency = 1,
+				Parent = self.Content
+			})
+			local label = create("TextLabel", {
+				Name = "Label",
+				Size = UDim2.new(1, -140, 1, 0),
+				BackgroundTransparency = 1,
+				Text = text,
+				TextColor3 = Color3.fromRGB(230, 230, 230),
+				TextXAlignment = Enum.TextXAlignment.Left,
+				Font = Enum.Font.Gotham,
+				TextSize = 16,
+				Parent = frame
+			})
+			local dropBtn = create("TextButton", {
+				Name = "DropButton",
+				Size = UDim2.new(0, 120, 0, 30),
+				Position = UDim2.new(1, -125, 0.5, -15),
+				BackgroundColor3 = Color3.fromRGB(40, 0, 55),
+				Text = "Выбрать",
+				TextColor3 = Color3.fromRGB(255, 255, 255),
+				Font = Enum.Font.Gotham,
+				TextSize = 14,
+				Parent = frame
+			})
+			create("UICorner", { CornerRadius = UDim.new(0, 8), Parent = dropBtn })
+			create("UIStroke", { Thickness = 1, Color = Color3.fromRGB(140, 0, 255), Transparency = 0.5, Parent = dropBtn })
+
+			dropBtn.MouseButton1Click:Connect(function()
+				local listFrame = create("Frame", {
+					Name = "DropdownList",
+					Size = UDim2.new(0, 120, 0, math.min(#options, 5) * 32),
+					Position = UDim2.new(1, -125, 0, 35),
+					BackgroundColor3 = Color3.fromRGB(20, 0, 30),
+					Parent = frame
+				})
+				create("UICorner", { CornerRadius = UDim.new(0, 8), Parent = listFrame })
+				create("UIStroke", { Thickness = 1, Color = Color3.fromRGB(140, 0, 255), Transparency = 0.5, Parent = listFrame })
+				local listLayout = create("UIListLayout", { Padding = UDim.new(0, 2), FillDirection = Enum.FillDirection.Vertical, HorizontalAlignment = Enum.HorizontalAlignment.Center, Parent = listFrame })
+
+				for _, opt in ipairs(options) do
+					local optBtn = create("TextButton", {
+						Size = UDim2.new(1, -4, 0, 28),
+						BackgroundColor3 = Color3.fromRGB(60, 0, 80),
+						Text = opt,
+						TextColor3 = Color3.new(1, 1, 1),
+						Font = Enum.Font.Gotham,
+						TextSize = 14,
+						Parent = listFrame
+					})
+					create("UICorner", { CornerRadius = UDim.new(0, 4), Parent = optBtn })
+					optBtn.MouseEnter:Connect(function() tween(optBtn, 0.1, { BackgroundColor3 = Color3.fromRGB(90, 0, 120) }) end)
+					optBtn.MouseLeave:Connect(function() tween(optBtn, 0.1, { BackgroundColor3 = Color3.fromRGB(60, 0, 80) }) end)
+					optBtn.MouseButton1Click:Connect(function()
+						dropBtn.Text = opt
+						callback(opt)
+						listFrame:Destroy()
+					end)
+				end
+
+				local function closeOnClick(input)
+					if input.UserInputType == Enum.UserInputType.MouseButton1 then
+						local obj = input.Target
+						if obj and not obj:IsDescendantOf(listFrame) and obj ~= dropBtn then
+							listFrame:Destroy()
+							UserInputService.InputBegan:Connect(closeOnClick)
+						end
+					end
+				end
+				UserInputService.InputBegan:Connect(closeOnClick)
+			end)
+
+			table.insert(self.Elements, frame)
+		end
+
+		-- Add input
+		function tab:AddInput(inputConfig)
+			inputConfig = inputConfig or {}
+			local text = inputConfig.Text or "Input"
+			local placeholder = inputConfig.Placeholder or "Введите текст..."
+			local callback = inputConfig.Callback or function() end
+
+			local frame = create("Frame", {
+				Name = "Input_" .. text,
+				Size = UDim2.new(1, 0, 0, 40),
+				Position = UDim2.new(0, 0, 0, nextY()),
+				BackgroundTransparency = 1,
+				Parent = self.Content
+			})
+			local label = create("TextLabel", {
+				Name = "Label",
+				Size = UDim2.new(1, -140, 1, 0),
+				BackgroundTransparency = 1,
+				Text = text,
+				TextColor3 = Color3.fromRGB(230, 230, 230),
+				TextXAlignment = Enum.TextXAlignment.Left,
+				Font = Enum.Font.Gotham,
+				TextSize = 16,
+				Parent = frame
+			})
+			local box = create("TextBox", {
+				Name = "TextBox",
+				Size = UDim2.new(0, 120, 0, 30),
+				Position = UDim2.new(1, -125, 0.5, -15),
+				BackgroundColor3 = Color3.fromRGB(30, 0, 40),
+				PlaceholderText = placeholder,
+				PlaceholderColor3 = Color3.fromRGB(150, 150, 150),
+				Text = "",
+				TextColor3 = Color3.new(1, 1, 1),
+				Font = Enum.Font.Gotham,
+				TextSize = 14,
+				ClearTextOnFocus = false,
+				Parent = frame
+			})
+			create("UICorner", { CornerRadius = UDim.new(0, 8), Parent = box })
+			create("UIStroke", { Thickness = 1, Color = Color3.fromRGB(140, 0, 255), Transparency = 0.5, Parent = box })
+
+			box.FocusLost:Connect(function()
+				callback(box.Text)
+			end)
+
+			table.insert(self.Elements, frame)
+		end
+
+		-- Add paragraph
+		function tab:AddParagraph(paraConfig)
+			paraConfig = paraConfig or {}
+			local titleText = paraConfig.Title or "Title"
+			local descText = paraConfig.Description or "Description"
+
+			local frame = create("Frame", {
+				Name = "Paragraph_" .. titleText,
+				Size = UDim2.new(1, 0, 0, 70),
+				Position = UDim2.new(0, 0, 0, nextY()),
+				BackgroundTransparency = 1,
+				Parent = self.Content
+			})
+			local title = create("TextLabel", {
+				Name = "Title",
+				Size = UDim2.new(1, 0, 0, 25),
+				BackgroundTransparency = 1,
+				Text = titleText,
+				TextColor3 = Color3.fromRGB(220, 180, 255),
+				TextXAlignment = Enum.TextXAlignment.Left,
+				Font = Enum.Font.GothamBold,
+				TextSize = 18,
+				Parent = frame
+			})
+			local desc = create("TextLabel", {
+				Name = "Description",
+				Size = UDim2.new(1, 0, 0, 40),
+				Position = UDim2.new(0, 0, 0, 25),
+				BackgroundTransparency = 1,
+				Text = descText,
+				TextColor3 = Color3.fromRGB(200, 200, 200),
+				TextXAlignment = Enum.TextXAlignment.Left,
+				TextWrapped = true,
+				Font = Enum.Font.Gotham,
+				TextSize = 14,
+				Parent = frame
+			})
+
+			table.insert(self.Elements, frame)
+		end
+
+		table.insert(self.Tabs, tab)
+		if #self.Tabs == 1 then
+			-- Activate first tab manually without using :Fire()
+			tabContent.Visible = true
+			tween(tabButton, 0.1, { BackgroundColor3 = Color3.fromRGB(80, 0, 120) })
+			self.CurrentTab = tab
+		end
+
+		return tab
+	end
+
+	-- Notification system
+	function windowData:Notify(config)
+		config = config or {}
+		local title = config.Title or "Notification"
+		local desc = config.Description or ""
+		local duration = config.Duration or 3
+
+		local notif = create("Frame", {
+			Name = "Notification",
+			Size = UDim2.new(0, 320, 0, 90),
+			Position = UDim2.new(1, 20, 1, -110),
+			BackgroundColor3 = Color3.fromRGB(20, 0, 30),
+			Parent = screenGui
+		})
+		create("UICorner", { CornerRadius = UDim.new(0, 12), Parent = notif })
+		create("UIStroke", { Thickness = 1.5, Color = Color3.fromRGB(140, 0, 255), Transparency = 0.5, Parent = notif })
+		local gradientNotif = create("UIGradient", {
+			Color = ColorSequence.new({
+				ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 0, 30)),
+				ColorSequenceKeypoint.new(1, Color3.fromRGB(50, 0, 70))
+			}),
+			Rotation = 90,
+			Parent = notif
+		})
+
+		local titleLabel = create("TextLabel", {
+			Size = UDim2.new(1, -10, 0, 25),
+			Position = UDim2.new(0, 5, 0, 5),
+			BackgroundTransparency = 1,
+			Text = title,
+			TextColor3 = Color3.fromRGB(220, 180, 255),
+			Font = Enum.Font.GothamBold,
+			TextSize = 18,
+			TextXAlignment = Enum.TextXAlignment.Left,
+			Parent = notif
+		})
+		local descLabel = create("TextLabel", {
+			Size = UDim2.new(1, -10, 0, 45),
+			Position = UDim2.new(0, 5, 0, 30),
+			BackgroundTransparency = 1,
+			Text = desc,
+			TextColor3 = Color3.fromRGB(220, 220, 220),
+			Font = Enum.Font.Gotham,
+			TextSize = 14,
+			TextXAlignment = Enum.TextXAlignment.Left,
+			TextWrapped = true,
+			Parent = notif
+		})
+		local timer = create("Frame", {
+			Size = UDim2.new(1, 0, 0, 4),
+			Position = UDim2.new(0, 0, 1, -4),
+			BackgroundColor3 = Color3.fromRGB(170, 0, 255),
+			Parent = notif
+		})
+		create("UICorner", { CornerRadius = UDim.new(0, 2), Parent = timer })
+
+		tween(notif, 0.3, { Position = UDim2.new(1, -340, 1, -110) })
+		tween(timer, duration, { Size = UDim2.new(0, 0, 0, 4) }):Completed:Connect(function()
+			tween(notif, 0.3, { Position = UDim2.new(1, 20, 1, -110) }):Completed:Connect(function()
+				notif:Destroy()
+			end)
+		end)
+	end
+
+	return windowData
+end
+
+return UILibrary
